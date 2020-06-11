@@ -31,8 +31,8 @@ def train_w2v_model(train):
 	  
 	    data.append(temp) 
 
-	print(data)
-	model = Word2Vec(data, min_count = 1, size = 30, window = 5)
+	# print(data)
+	model = Word2Vec(data, min_count = 1, size = 30, window = 5, sg = 1)
 	model.save("word2vec.model")
 
 def get_w2v_model():
@@ -89,20 +89,20 @@ def convert_to_num(y):
 
 
 train = preprocessing.get_data('data/aita_minimal_train.csv')
-test = preprocessing.get_data('data/aita_minimal_valid.csv')
+test = preprocessing.get_data('data/aita_minimal_test.csv')
 
-# Balancing training set
-train_NTA = train[train.verdict == 'NTA']
-train_YTA = train[train.verdict == 'YTA']
-train_NAH = train[train.verdict == 'NAH']
-train_ESH = train[train.verdict == 'ESH']
+# # Balancing training set
+# train_NTA = train[train.verdict == 'NTA']
+# train_YTA = train[train.verdict == 'YTA']
+# train_NAH = train[train.verdict == 'NAH']
+# train_ESH = train[train.verdict == 'ESH']
 
-train_NTA = train_NTA.sample(int(1.03*len(train_ESH)), random_state=0)
-train_YTA = train_YTA.sample(int(1.015*len(train_ESH)), random_state=0)
-train_NAH = train_NAH.sample(int(1.*len(train_ESH)), random_state=0)
+# train_NTA = train_NTA.sample(int(1.1*len(train_ESH)), random_state=0)
+# train_YTA = train_YTA.sample(int(1.1*len(train_ESH)), random_state=0)
+# train_NAH = train_NAH.sample(int(1.1*len(train_ESH)), random_state=0)
 
-train = pd.concat([train_NTA, train_YTA, train_NAH, train_ESH])
-train = train.sample(frac=1, random_state=0)
+# train = pd.concat([train_NTA, train_YTA, train_NAH, train_ESH])
+# train = train.sample(frac=1, random_state=0)
 
 
 # # Changing labels
@@ -124,22 +124,22 @@ train = train.sample(frac=1, random_state=0)
 
 
 
-# # Changing labels with more correct splits
-# train.verdict[train.verdict == 'NAH'] = 'NTA'
-# train.verdict[train.verdict == 'ESH'] = 'YTA'
-# test.verdict[test.verdict == 'NAH'] = 'NTA'
-# test.verdict[test.verdict == 'ESH'] = 'YTA'
-# # train[train.verdict == 'NAH']
-# # train[train.verdict == 'ESH']
+# Changing labels with more correct splits
+train.verdict[train.verdict == 'NAH'] = 'NTA'
+train.verdict[train.verdict == 'ESH'] = 'YTA'
+test.verdict[test.verdict == 'NAH'] = 'NTA'
+test.verdict[test.verdict == 'ESH'] = 'YTA'
+# train[train.verdict == 'NAH']
+# train[train.verdict == 'ESH']
 
-# train_NTA = train[train.verdict == 'NTA']
-# train_YTA = train[train.verdict == 'YTA']
-# # train_NTA = train_NTA.sample(int(1.1*len(train_ESH)), random_state=0)
-# train_NTA = train_NTA.sample(int(0.9788*len(train_YTA)), random_state=0)
-# # train_NAH = train_NAH.sample(int(1.*len(train_ESH)), random_state=0)
+train_NTA = train[train.verdict == 'NTA']
+train_YTA = train[train.verdict == 'YTA']
+# train_NTA = train_NTA.sample(int(1.1*len(train_ESH)), random_state=0)
+train_NTA = train_NTA.sample(int(0.99*len(train_YTA)), random_state=0)
+# train_NAH = train_NAH.sample(int(1.*len(train_ESH)), random_state=0)
 
-# train = pd.concat([train_NTA, train_YTA])
-# train = train.sample(frac=1, random_state=0)
+train = pd.concat([train_NTA, train_YTA])
+train = train.sample(frac=1, random_state=0)
 
 
 
@@ -184,7 +184,7 @@ np.set_printoptions(precision=2)
 
 # Plot non-normalized confusion matrix
 # class_names = ['NTA', '']
-titles_options = [("SVM (RBF Kernel) Dev Set Confusion Matrix:\n(Undersampling with Unequal Proportions)", None)]
+titles_options = [("P2V-SVM Test Set Confusion Matrix:\n(no Undersampling)", None)]
 for title, normalize in titles_options:
     disp = plot_confusion_matrix(linear_regressor, X_test, Y_test,
                                  # display_labels=class_names,
@@ -205,7 +205,9 @@ Y_pred_train = linear_regressor.predict(X_train)
 # print(Y_train)
 Y_pred_train = pd.Index(Y_pred_train)
 print(Y_pred_train.value_counts())
-titles_options = [("SVM (RBF Kernel) Train Set Confusion Matrix:\n(Undersampling with Unequal Proportions)", None)]
+titles_options = [("P2V-SVM Training Set Confusion Matrix:\n(Undersampling with Unequal Proportions)", None)]
+# titles_options = [("SVM (RBF Kernel) Train Set Confusion Matrix:\n(No Undersampling)", None)]
+
 for title, normalize in titles_options:
     disp = plot_confusion_matrix(linear_regressor, X_train, Y_train,
                                  # display_labels=class_names,

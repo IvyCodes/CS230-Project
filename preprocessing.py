@@ -28,9 +28,15 @@ def standardize_verdicts(df):
 	Changes verdicts from text to NTA, NAH, ESH, YTA, or unknown
 	"""
 	verdicts = df.verdict
-	verdcit_tags_verbose = ['Asshole', 'Everyone Sucks', 'No A-holes here', 'Not the A-hole']
+	verdict_tags_verbose = ['Asshole', 'Everyone Sucks', 'No A-holes here', 'Not the A-hole']
+	verdict_tags_verbose.extend([v.lower() for v in verdict_tags_verbose])
+	verdict_tags.extend(verdict_tags)
+	print(verdict_tags_verbose)
+	print(verdict_tags)
+	# print(zip(verdict_tags,verdict_tags_verbose))
 
-	verbose_to_tag = {v_verbose: v for (v,v_verbose) in zip(verdict_tags, verdcit_tags_verbose)}
+	verbose_to_tag = {v_verbose: v for (v,v_verbose) in zip(verdict_tags, verdict_tags_verbose)}
+	print(verbose_to_tag)
 	# print(aita_dict)
 	verdicts = [verbose_to_tag.get(v,'unk') for v in verdicts]
 	df.verdict = verdicts
@@ -146,7 +152,7 @@ def get_data(filename):
 
 # def main(min_freq = 1000):
 # 	aita_df = pd.read_csv('data/aita.csv', names = ['id', 'title', 'score', 'num_comments', 'story', 'created', 'verdict'])
-# 	aita_minimal = aita_df[['title', 'story', 'verdict']]
+# 	aita_minimal = aita_df[['id','title', 'story', 'verdict']]
 # 	drop_empty_stories(aita_minimal)
 # 	standardize_verdicts(aita_minimal)
 # 	remove_non_aita_entries(aita_minimal)
@@ -155,8 +161,8 @@ def get_data(filename):
 # 	train, test= train_test_split(aita_minimal, test_size=0.4)
 # 	test, valid = train_test_split(test, test_size=0.5)
 
-# 	train.to_csv('data/aita_minimal_train.csv', mode = 'w+', header = ['title', 'story', 'verdict'])
-# 	valid.to_csv('data/aita_minimal_valid.csv', mode = 'w+', header = ['title', 'story', 'verdict'])
-# 	test.to_csv('data/aita_minimal_test.csv', mode = 'w+', header = ['title', 'story', 'verdict'])
+# 	train.to_csv('data/aita_minimal_train.csv', mode = 'w+', header = ['id','title', 'story', 'verdict'])
+# 	valid.to_csv('data/aita_minimal_valid.csv', mode = 'w+', header = ['id','title', 'story', 'verdict'])
+# 	test.to_csv('data/aita_minimal_test.csv', mode = 'w+', header = ['id','title', 'story', 'verdict'])
 
 # main()

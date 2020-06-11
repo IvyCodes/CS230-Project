@@ -34,7 +34,7 @@ def train_w2v_model(train):
 	    data.append(temp) 
 
 	print(data)
-	model = Word2Vec(data, min_count = 1, size = 60, window = 5)
+	model = Word2Vec(data, min_count = 1, size = 60, window = 5, sg = 1)
 	model.save("word2vec.model")
 
 def get_w2v_model():
